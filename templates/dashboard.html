@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Notifications Banner -->
+{% if notifications %}
+  {% for n in notifications %}
+    <div class="alert alert-{{ n.type }} alert-dismissible fade show py-2 mb-2">
+      <i class="fa fa-bell me-2"></i>{{ n.msg }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Electricians</div>
+        <div class="stat-value">{{ electricians }}</div>
+      </div>
+      <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+        <i class="fa fa-users"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Total Jobs</div>
+        <div class="stat-value">{{ jobs }}</div>
+      </div>
+      <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+        <i class="fa fa-briefcase"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-value">{{ tasks }}</div>
+      </div>
+      <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+        <i class="fa fa-tasks"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Completed Tasks</div>
+        <div class="stat-value text-success">{{ completed }}</div>
+      </div>
+      <div class="stat-icon bg-success bg-opacity-10 text-success">
+        <i class="fa fa-check-circle"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Chart -->
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h6 class="fw-bold mb-3">📊 Overview Chart</h6>
+      <canvas id="chart" height="100"></canvas>
+    </div>
+  </div>
+  <!-- Recent Activity -->
+  <div class="col-md-5">
+    <div class="card p-4 h-100">
+      <h6 class="fw-bold mb-3">🕐 Recent Activity</h6>
+      <ul class="list-group list-group-flush">
+        {% for item in recent %}
+          <li class="list-group-item px-0 py-2 border-0 border-bottom">
+            <i class="fa fa-circle-dot text-primary me-2" style="font-size:10px;"></i>
+            {{ item['message'] }}
+          </li>
+        {% else %}
+          <li class="list-group-item text-muted px-0">No activity yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+new Chart(document.getElementById("chart"), {
+  type: "bar",
+  data: {
+    labels: ["Electricians", "Jobs", "Tasks", "Completed"],
+    datasets: [{
+      label: "Count",
+      data: [{{ electricians }}, {{ jobs }}, {{ tasks }}, {{ completed }}],
+      backgroundColor: ["#0d6efd", "#ffc107", "#dc3545", "#198754"],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}
